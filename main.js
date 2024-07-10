@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import GUI from 'lil-gui';
 
 let scene, camera, renderer, controls;
-
-let treeAngle = Math.PI / 4; // 45 degrees in radians
-let treeLength = 5;
-let treeDepth = 6;
-let treeScale = 0.6;
-
+let treeParameters = {
+    angle: Math.PI / 4, // 45 degrees in radians
+    length: 5,
+    depth: 6,
+    scale: 0.6
+};
 let treeGroup;
 
 init();
@@ -31,6 +32,12 @@ function init() {
 
     createTree();
 
+    const gui = new GUI();
+    gui.add(treeParameters, 'angle', 0, Math.PI, 0.01).onChange(createTree);
+    gui.add(treeParameters, 'length', 1, 10, 0.1).onChange(createTree);
+    gui.add(treeParameters, 'depth', 1, 10, 1).onChange(createTree);
+    gui.add(treeParameters, 'scale', 0.5, 1, 0.01).onChange(createTree);
+
     window.addEventListener('resize', onWindowResize, false);
 }
 
@@ -46,8 +53,7 @@ function createTree() {
 
         const end = new THREE.Vector3(
             start.x + length * Math.sin(angle),
-            start.y + length * Math.cos(angle),
-            start.z
+            start.y + length * Math.cos(angle)
         );
 
         const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
@@ -55,13 +61,13 @@ function createTree() {
 
         treeGroup.add(line);
 
-        const newLength = length * treeScale;
+        const newLength = length * treeParameters.scale;
 
-        addBranch(end, newLength, angle - treeAngle, depth - 1);
-        addBranch(end, newLength, angle + treeAngle, depth - 1);
+        addBranch(end, newLength, angle - treeParameters.angle, depth - 1);
+        addBranch(end, newLength, angle + treeParameters.angle, depth - 1);
     }
 
-    addBranch(new THREE.Vector3(0, 0, 0), treeLength, 0, treeDepth);
+    addBranch(new THREE.Vector3(0, 0, 0), treeParameters.length, 0, treeParameters.depth);
 }
 
 function onWindowResize() {
