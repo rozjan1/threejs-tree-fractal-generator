@@ -53,7 +53,8 @@ function createTree() {
 
         const end = new THREE.Vector3(
             start.x + length * Math.sin(angle),
-            start.y + length * Math.cos(angle)
+            start.y + length * Math.cos(angle),
+            start.z - length * 0.1 
         );
 
         const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
